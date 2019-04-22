@@ -6,7 +6,7 @@ public class Tester {
         for(int i=0;i<n;i++)
             data[i]=(int)(Math.random()*maxVal+1);
         System.out.println(Sort.print(data));
-        System.out.println(Sort.print(sorter.selectionSort(data)));
+        System.out.println(Sort.print(sorter.bubbleSort(data)));
         System.out.println(Sort.print(data));
 
     }

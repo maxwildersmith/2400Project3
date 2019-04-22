@@ -1,3 +1,5 @@
+import java.util.function.Function;
+
 public class Sort<T extends Comparable> {
 
     public static String print(Integer[] arr){
@@ -7,7 +9,8 @@ public class Sort<T extends Comparable> {
         return out.substring(0,out.length()-2);
     }
 
-    public T[] bubbleSort(T[] data){
+    public T[] bubbleSort(T[] in){
+        T[] data=in.clone();
         boolean swapped=true;
         while(swapped){
             swapped=false;
@@ -22,7 +25,8 @@ public class Sort<T extends Comparable> {
         return data;
     }
 
-    public T[] selectionSort(T[] data){
+    public T[] selectionSort(T[] in){
+        T[] data=in.clone();
         for(int i=0;i<data.length-1;i++){
             int min=i;
             for(int j=i+1;j<data.length;j++)
@@ -45,5 +49,9 @@ public class Sort<T extends Comparable> {
 
     public T[] quickSort(T[] data){
         return data;
+    }
+
+    public static long time(){
+        return 0;
     }
 }
