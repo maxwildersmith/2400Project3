@@ -1,3 +1,4 @@
+import java.sql.Time;
 import java.util.function.Function;
 
 public class Sort<T extends Comparable> {
@@ -40,6 +41,11 @@ public class Sort<T extends Comparable> {
     }
 
     public T[] insertionSort(T[] data){
+        for(int i=0;i<data.length;i++){
+            T start = data[i];
+
+
+        }
         return data;
     }
 
@@ -51,7 +57,9 @@ public class Sort<T extends Comparable> {
         return data;
     }
 
-    public static long time(){
-        return 0;
+    public static long time(Integer[] data, Function<Integer[], Integer[]> sorter){
+        long start = System.currentTimeMillis();
+        sorter.apply(data);
+        return System.currentTimeMillis()-start;
     }
 }
