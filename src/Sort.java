@@ -1,4 +1,10 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.function.Function;
 
 public class Sort<T extends Comparable> {
@@ -43,8 +49,11 @@ public class Sort<T extends Comparable> {
     public T[] insertionSort(T[] data){
         for(int i=0;i<data.length;i++){
             T start = data[i];
-
-
+            int j;
+            for(j=i-1;j>=0&&data[j].compareTo(start)>0;j--){
+                data[j+1]=data[j];
+            }
+            data[j+1]=start;
         }
         return data;
     }
@@ -61,5 +70,21 @@ public class Sort<T extends Comparable> {
         long start = System.currentTimeMillis();
         sorter.apply(data);
         return System.currentTimeMillis()-start;
+    }
+
+    public static boolean createCSV(String filename, ArrayList<Long> sizes, ArrayList<Long> times){
+        File csv = new File(filename);
+        try {
+            csv.createNewFile();
+            PrintWriter file = new PrintWriter(new FileWriter(csv));
+//        String file="Time,Array Size\n";
+            file.println("Time,Array Size");
+            for (int i = 0; i < sizes.size(); i++)
+                file.println(times.get(i) + "," + sizes.get(i));
+            file.close();
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
     }
 }
