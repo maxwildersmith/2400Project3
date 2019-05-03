@@ -21,10 +21,16 @@ public class Tester {
         ArrayList<Long> times = new ArrayList<>();
 
 
+
+
         System.out.println("Insertion Sort:");
         long last=0;
         long size=startSize;
         Integer[] data = randomSeqArr(size);
+
+
+        System.out.println(""+Sort.print(sorter.quickSort(data,0,data.length-1)));
+
         while(last<timeout*growthRate){
             System.out.println(size);
             last = Sort.time(data,sorter::insertionSort);

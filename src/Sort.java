@@ -58,11 +58,41 @@ public class Sort<T extends Comparable> {
         return data;
     }
 
-    public T[] mergeSort(T[] data){
-        return data;
+    public T[] mergeSort(T[] arr){
+
+        if(arr.length>2) {
+            T[] left = (T[]) (new Object[arr.length / 2]);
+            T[] right = (T[]) (new Object[arr.length / 2 - arr.length]);
+        } else if(arr.length==2)
+            if(arr[0].compareTo(arr[1])>0){
+                T tmp = arr[0];
+                arr[0]=arr[1];
+                arr[1]=tmp;
+            }
+
+        return arr;
     }
 
-    public T[] quickSort(T[] data){
+    public T[] quickSort(T[] data, int start, int end){
+        int small=start-1;
+        if(start<end) {
+            T pivot = data[end];
+
+            for (int i = start; i < end; i++)
+                if (data[i].compareTo(pivot) < 0) {
+                    small++;
+                    T tmp = data[small];
+                    data[small] = data[i];
+                    data[i] = tmp;
+                }
+            T tmp = data[++small];
+            data[small] = data[end];
+            data[end] = tmp;
+
+            quickSort(data,start,small-1);
+            quickSort(data,small+1,end);
+        }
+
         return data;
     }
 
