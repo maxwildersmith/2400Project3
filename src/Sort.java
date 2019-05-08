@@ -2,8 +2,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.function.Function;
 
@@ -16,8 +14,9 @@ public class Sort<T extends Comparable> {
         return out.substring(0,out.length()-2);
     }
 
-    public T[] bubbleSort(T[] in){
-        T[] data=in.clone();
+    public long bubbleSort(T[] data){
+        long startTime = System.currentTimeMillis();
+
         boolean swapped=true;
         while(swapped){
             swapped=false;
@@ -29,24 +28,10 @@ public class Sort<T extends Comparable> {
                     data[i+1]=tmp;
                 }
         }
-        return data;
+        return System.currentTimeMillis()-startTime;
     }
 
-    public T[] selectionSort(T[] in){
-        T[] data=in.clone();
-        for(int i=0;i<data.length-1;i++){
-            int min=i;
-            for(int j=i+1;j<data.length;j++)
-                if(data[min].compareTo(data[j])>0)
-                    min=j;
-            T tmp = data[i];
-            data[i]=data[min];
-            data[min]=tmp;
-        }
-        return data;
-    }
-
-    public long selectionSort2(T[] data){
+    public long selectionSort(T[] data){
         long start = System.currentTimeMillis();
 
         for(int i=0;i<data.length-1;i++){
@@ -62,7 +47,9 @@ public class Sort<T extends Comparable> {
     }
 
 
-    public T[] insertionSort(T[] data){
+    public long insertionSort(T[] data){
+        long startTime = System.currentTimeMillis();
+
         for(int i=0;i<data.length;i++){
             T start = data[i];
             int j;
@@ -71,25 +58,50 @@ public class Sort<T extends Comparable> {
             }
             data[j+1]=start;
         }
-        return data;
+        return System.currentTimeMillis()-startTime;
     }
 
-    public T[] mergeSort(T[] arr){
-
-        if(arr.length>2) {
-            T[] left = (T[]) (new Object[arr.length / 2]);
-            T[] right = (T[]) (new Object[arr.length / 2 - arr.length]);
-        } else if(arr.length==2)
-            if(arr[0].compareTo(arr[1])>0){
-                T tmp = arr[0];
-                arr[0]=arr[1];
-                arr[1]=tmp;
-            }
-
-        return arr;
+    public long mergeSort(T[] arr){
+        long startTime = System.currentTimeMillis();
+        mergeSort(arr,0,arr.length-1);
+        return System.currentTimeMillis()-startTime;
     }
 
-    public T[] quickSort(T[] data, int start, int end){
+    private void mergeSort(T[] data,int start,int end){
+        if(start<end){
+            int mid=(start+end)/2;
+            mergeSort(data,start,mid);
+            mergeSort(data,mid+1,end);
+            merge(data,start,mid,end);
+        }
+    }
+
+    private void merge(T[] arr, int start, int mid, int end){
+        int i=start;
+        int k=0;
+        int j=mid+1;
+        T[] tmp = (T[])(new Comparable[end-start+1]);
+
+        while(i<=mid&&j<=end)
+            if(arr[i].compareTo(arr[j])<=0)
+                tmp[k++]=arr[i++];
+            else
+                tmp[k++]=arr[j++];
+        while(i<=mid)
+            tmp[k++]=arr[i++];
+        while(j<=end)
+            tmp[k++]=arr[j++];
+        for(int index=0;index<tmp.length;index++)
+            arr[index+start]=tmp[index];
+    }
+
+    public long quickSort(T[] data){
+        long startTime = System.currentTimeMillis();
+        quickSort(data,0,data.length-1);
+        return System.currentTimeMillis()-startTime;
+    }
+
+    private void quickSort(T[] data, int start, int end){
         int small=start-1;
         if(start<end) {
             T pivot = data[end];
@@ -108,9 +120,10 @@ public class Sort<T extends Comparable> {
             quickSort(data,start,small-1);
             quickSort(data,small+1,end);
         }
-
-        return data;
     }
+
+
+
 
     public static long time(Integer[] data, Function<Integer[], Integer[]> sorter){
         long start = System.currentTimeMillis();
@@ -119,7 +132,7 @@ public class Sort<T extends Comparable> {
     }
 
     public static boolean createCSV(String filename, ArrayList<Long> sizes, ArrayList<Long> times){
-        File csv = new File(filename);
+        File csv = new File(""+filename);
         try {
             csv.createNewFile();
             PrintWriter file = new PrintWriter(new FileWriter(csv));
@@ -129,6 +142,7 @@ public class Sort<T extends Comparable> {
                 file.println(times.get(i) + "," + sizes.get(i));
             file.close();
         } catch (IOException e) {
+            e.printStackTrace();
             return false;
         }
         return true;
