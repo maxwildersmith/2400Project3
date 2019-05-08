@@ -5,81 +5,41 @@ import java.util.List;
 import java.util.function.Function;
 
 public class Tester {
-    private static long timeout = (long)(60*1000 * .5), startSize=10000, maxSize=100000;
+
+    private static long timeout = (long)(60*1000 * .5), startSize=10000, maxSize=0;
     private static double growthRate=1.2;
 
+    /**
+     * The main method to be run to test all the sorting algorithms.
+     */
     public static void main(String[] args) {
         Sort<Integer> sorter = new Sort();
-        int n = 50, maxVal=100;
 
-//        Integer[] data = new Integer[n];
-//        for(int i=1;i<n;i++)
-//            data[i]=(int)(Math.random()*maxVal+1);
-//
 
 
         testMethods(1000);
 
-        Sorter bubble = new Sorter("Bubble", sorter::bubbleSort);
+        Sorter bubble = new Sorter(1,"Bubble", sorter::bubbleSort);
         bubble.start();
 
-        Sorter selection = new Sorter("Selection", sorter::selectionSort);
+        Sorter selection = new Sorter(4,"Selection", sorter::selectionSort);
         selection.start();
 
-        Sorter insertion = new Sorter("Insertion", sorter::insertionSort);
+        Sorter insertion = new Sorter(4,"Insertion", sorter::insertionSort);
         insertion.start();
 
-        Sorter merge = new Sorter("Merge", sorter::mergeSort);
+        Sorter merge = new Sorter(5,"Merge", sorter::mergeSort);
         merge.start();
 
-        Sorter quick = new Sorter("Quick", sorter::quickSort);
+        Sorter quick = new Sorter(5,"Quick", sorter::quickSort);
         quick.start();
-
-
-
-
-
-//        while(last<timeout*growthRate){
-//            System.out.println(size);
-//            last = Sort.time(data,sorter::insertionSort);
-//            times.add(last);
-//            sizes.add(size);
-////            System.out.println(last+"ms for an array of "+size+" elements: "+Sort.print(data)+"");
-//            size*=2;
-//            data=randomSeqArr(size);
-//        }
-//        Sort.createCSV("insertion.csv",sizes,times);
-//
-//        System.out.println("Bubble Sort:");
-//        last=0;
-//        size=startSize;
-//        data = randomSeqArr(size);
-//        while(last<timeout*growthRate){
-//            last = Sort.time(data,sorter::bubbleSort);
-//            times.add(last);
-//            sizes.add(size);
-//            System.out.println(last+"ms for an array of "+size+" elements: "+Sort.print(data)+"\n");
-//            size*=2;
-//            data=randomSeqArr(size);
-//        }
-//        Sort.createCSV("bubble.csv",sizes,times);
-//
-//        System.out.println("Selection Sort:");
-//        last=0;
-//        size=startSize;
-//        data = randomSeqArr(size);
-//        while(last<timeout*growthRate){
-//            last = Sort.time(data,sorter::selectionSort);
-//            times.add(last);
-//            sizes.add(size);
-//            System.out.println(last+"ms for an array of "+size+" elements: "+Sort.print(data)+"\n");
-//            size*=2;
-//            data=randomSeqArr(size);
-//        }
-//        Sort.createCSV("selection.csv",sizes,times);
-
     }
 
+    /**
+     * A helper method that creates that an ordered array of a given size for comparison with the sorted arrays.
+     * @param size The size of the array to create.
+     * @return The ordered array of a given size.
+     */
     private static Integer[] inorderArr(int size) {
         ArrayList<Integer> tmp = new ArrayList<>();
         for(int i=1;i<=size;i++)
@@ -87,6 +47,10 @@ public class Tester {
         return tmp.toArray(new Integer[0]);
     }
 
+    /**
+     * A helper method that tests each of the sorting algorithms to make sure they properly sort the data set.
+     * @param testSize Size of array to test with.
+     */
     public static void testMethods(int testSize){
         Sort<Integer> sorter = new Sort();
 
@@ -105,9 +69,14 @@ public class Tester {
         data = base.clone();
         System.out.println("Quick     | Time: "+sorter.quickSort(data)+" \t|"+(Arrays.compare(data,sample)==0?" Working":" ERROR"));
 
-        System.out.println("Done testing...\n\n");
+        System.out.println("Done testing...\n");
     }
 
+    /**
+     * A helper method to generate a randomized Integer array of a given size.
+     * @param size The size of the array to create.
+     * @return The randomly shuffled array of a given size.
+     */
     public static Integer[] randomSeqArr(long size){
         ArrayList<Integer> tmp = new ArrayList<>();
         for(int i=1;i<=size;i++)
@@ -116,13 +85,29 @@ public class Tester {
         return tmp.toArray(new Integer[0]);
     }
 
+    /**
+     * A helper class that allows the methods to be run and tested in individual threads.
+     */
     public static class Sorter extends Thread{
         Function<Integer[], Long> method;
+        int maxRuns, runNum;
 
-        public Sorter(String name, Function<Integer[], Long> method){
+        /**
+         * Constructor that takes the name of the algorithm to test, and a method reference to the algorithm.
+         * @param runCount The number of trials to be run for this algorithm.
+         * @param name The name of the algorithm that is being tested.
+         * @param method The reference to the method that runs the algorithm.
+         */
+        public Sorter(int runCount,String name, Function<Integer[], Long> method){
+            maxRuns = runCount;
             this.method = method;
             this.setName(name);
+            runNum=1;
         }
+
+        /**
+         * A custom run method from the Thread class that is called when the new thread is created.
+         */
         public void run(){
             ArrayList<Long> sizes = new ArrayList<>();
             ArrayList<Long> times = new ArrayList<>();
@@ -130,19 +115,17 @@ public class Tester {
             long size=startSize;
             Integer[] data =randomSeqArr(size);
 
-//            while(last<timeout*growthRate){
-            while(size<maxSize){
-//                System.out.println(size);
+            while(maxSize==0?last<timeout/growthRate:size<maxSize){
                 last = method.apply(data);
                 times.add(last);
                 sizes.add(size);
-//            System.out.println(last+"ms for an array of "+size+" elements: "+Sort.print(data)+"");
                 size*=growthRate;
                 data=randomSeqArr(size);
             }
-
             Sort.createCSV(getName()+".csv",sizes,times);
-            System.out.println("Finished "+getName());
+            System.out.println("Finished "+getName()+" iteration "+runNum++ +" of "+maxRuns);
+            if(runNum<=maxRuns)
+                run();
         }
     }
 }
