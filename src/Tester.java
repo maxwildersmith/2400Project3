@@ -73,7 +73,7 @@ public class Tester {
     }
 
 
-    private static Integer[] randomSeqArr(long size){
+    public static Integer[] randomSeqArr(long size){
         ArrayList<Integer> tmp = new ArrayList<>();
         for(int i=1;i<=size;i++)
             tmp.add(i);

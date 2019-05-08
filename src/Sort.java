@@ -46,6 +46,22 @@ public class Sort<T extends Comparable> {
         return data;
     }
 
+    public long selectionSort2(T[] data){
+        long start = System.currentTimeMillis();
+
+        for(int i=0;i<data.length-1;i++){
+            int min=i;
+            for(int j=i+1;j<data.length;j++)
+                if(data[min].compareTo(data[j])>0)
+                    min=j;
+            T tmp = data[i];
+            data[i]=data[min];
+            data[min]=tmp;
+        }
+        return System.currentTimeMillis()-start;
+    }
+
+
     public T[] insertionSort(T[] data){
         for(int i=0;i<data.length;i++){
             T start = data[i];
