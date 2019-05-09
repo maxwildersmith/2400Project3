@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 public class Tester {
 
-    private static long timeout = (long)(60*1000 * .5), startSize=10000, maxSize=0;
+    private static long timeout = (long)(60*1000 * 8), startSize=10000, maxSize=200000;
     private static double growthRate=1.2;
 
     /**
@@ -16,23 +16,24 @@ public class Tester {
         Sort<Integer> sorter = new Sort();
 
 
-
         testMethods(1000);
 
-        Sorter bubble = new Sorter(1,"Bubble", sorter::bubbleSort);
-        bubble.start();
+        Sorter merge = new Sorter(6,"Merge", sorter::mergeSort);
+        merge.run();
+
+        Sorter quick = new Sorter(6,"Quick", sorter::quickSort);
+        quick.run();
+
+        Sorter bubble = new Sorter(4,"Bubble", sorter::bubbleSort);
+        bubble.run();
 
         Sorter selection = new Sorter(4,"Selection", sorter::selectionSort);
-        selection.start();
+        selection.run();
 
         Sorter insertion = new Sorter(4,"Insertion", sorter::insertionSort);
-        insertion.start();
+        insertion.run();
 
-        Sorter merge = new Sorter(5,"Merge", sorter::mergeSort);
-        merge.start();
 
-        Sorter quick = new Sorter(5,"Quick", sorter::quickSort);
-        quick.start();
     }
 
     /**
@@ -128,4 +129,6 @@ public class Tester {
                 run();
         }
     }
+
+
 }
